@@ -17,14 +17,14 @@ predicate SortedExcept(a:array<int>,low:int, high:int, except:int )
 predicate Shifted(a:array<int>, a_old:seq<int>, low:int, high:int)
     reads a 
     requires a.Length == |a_old|
-    requires 0<= low <= high  < a.Length
+    requires 0< low <= high  <= a.Length
 {
     // define of shuffle 
-    (forall i ::  (low < i <= high )==> a[i] == a_old[i-1]) && 
+    (forall i ::  (low <= i < high )==> a[i] == a_old[i-1]) && 
     // proof both part are same 
-    a[low + 1 .. high+1] == a_old[low..high] && 
+    a[low .. high] == a_old[low-1..high-1] && 
     // proof the multiset 
-    multiset(a[low + 1 .. high+1]) == multiset(a_old[low..high])
+    multiset(a[low .. high]) == multiset(a_old[low-1..high-1])
 }
 
 predicate unShifted(a:array<int>, a_old:seq<int>, low:int, high:int)
@@ -64,7 +64,7 @@ modifies a;
             invariant SortedExcept(a,0, up, injectPoint)
             // defined the shift and unshifted part 
             invariant unShifted(a, a_old, 0, injectPoint);
-            invariant Shifted(a, a_old, injectPoint, up);
+            invariant Shifted(a, a_old, injectPoint+1, up+1);
             // define of inject value 
             invariant injectValue == a_old[up];
             // first proof of content isn't changed 
