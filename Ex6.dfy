@@ -37,47 +37,47 @@ predicate SortedExcept(a:array<int>, high:int, except:int )
 //     multiset(a[low .. high]) == multiset(a_old[low-1..high-1])
 // }
 
-lemma arrayEqualToMultiset(a:array<int>, b:array<int>)
-    requires a[..] == b[..]
-    ensures multiset(a[..]) == multiset(b[..])
-{}
+// lemma arrayEqualToMultiset(a:array<int>, b:array<int>)
+//     requires a[..] == b[..]
+//     ensures multiset(a[..]) == multiset(b[..])
+// {}
 
-lemma arrayInjectEqual(a: array<int>, a_old:array<int>,up:int,injectPoint:int, injectValue:int)
-    // the old and new array will have basic property 
-    requires a.Length == a_old.Length;
-    requires 0 <= injectPoint<= up < a.Length
-    // then, below the inject point and they are equal 
-    requires a[..injectPoint] == a_old[..injectPoint];
-    // then between the inject point till upper bound is shiffted 
-    requires a[injectPoint+1 .. up+1] == a_old[injectPoint..up]
-    // then element after upper bound ar same 
-    requires a[up+1 ..] == a_old[up+1..]
-    // also require the inject value will be the value pushed out 
-    requires injectValue == a_old[up];
+// lemma arrayInjectEqual(a: array<int>, a_old:array<int>,up:int,injectPoint:int, injectValue:int)
+//     // the old and new array will have basic property 
+//     requires a.Length == a_old.Length;
+//     requires 0 <= injectPoint<= up < a.Length
+//     // then, below the inject point and they are equal 
+//     requires a[..injectPoint] == a_old[..injectPoint];
+//     // then between the inject point till upper bound is shiffted 
+//     requires a[injectPoint+1 .. up+1] == a_old[injectPoint..up]
+//     // then element after upper bound ar same 
+//     requires a[up+1 ..] == a_old[up+1..]
+//     // also require the inject value will be the value pushed out 
+//     requires injectValue == a_old[up];
 
-    // critical area will be the same 
-    ensures a[injectPoint+1 .. up+1] +[injectValue] == a_old[injectPoint..up +1]
-    ensures multiset([injectValue]+ a[injectPoint+1 .. up+1]) == multiset(a_old[injectPoint..up +1])
-    // then the final sequence will be identical 
-    ensures a[..injectPoint]  + a[injectPoint+1 .. up+1] +[injectValue]+ a[up+1 ..]  == a_old[..]
-    // hence they will have a equal multi set 
-    ensures 
-        multiset(a[..injectPoint])  + multiset(a[injectPoint+1 .. up+1]) 
-        + multiset([injectValue])+ multiset(a[up+1 ..])  == multiset(a_old[..])
-    ensures a[injectPoint+1 .. up+1]+[injectValue]+a[up+1 ..] == a_old[injectPoint..]
-    ensures multiset(a[injectPoint+1 .. up+1]) + multiset([injectValue])+ multiset(a[up+1 ..])  == multiset(a_old[injectPoint..])
-    ensures a[injectPoint +1 .. up+1] + a[up+1 ..] == a[injectPoint +1 ..]
-    ensures  multiset(a[injectPoint+1 .. up+1]) + multiset(a[up+1 ..]) == multiset(a[injectPoint +1 ..]) 
-    // even a simplify version 
-    ensures multiset(a[..injectPoint]) + multiset(a[injectPoint +1 ..]) + multiset([injectValue]) == multiset(a_old[..])
-{}
+//     // critical area will be the same 
+//     ensures a[injectPoint+1 .. up+1] +[injectValue] == a_old[injectPoint..up +1]
+//     ensures multiset([injectValue]+ a[injectPoint+1 .. up+1]) == multiset(a_old[injectPoint..up +1])
+//     // then the final sequence will be identical 
+//     ensures a[..injectPoint]  + a[injectPoint+1 .. up+1] +[injectValue]+ a[up+1 ..]  == a_old[..]
+//     // hence they will have a equal multi set 
+//     ensures 
+//         multiset(a[..injectPoint])  + multiset(a[injectPoint+1 .. up+1]) 
+//         + multiset([injectValue])+ multiset(a[up+1 ..])  == multiset(a_old[..])
+//     ensures a[injectPoint+1 .. up+1]+[injectValue]+a[up+1 ..] == a_old[injectPoint..]
+//     ensures multiset(a[injectPoint+1 .. up+1]) + multiset([injectValue])+ multiset(a[up+1 ..])  == multiset(a_old[injectPoint..])
+//     ensures a[injectPoint +1 .. up+1] + a[up+1 ..] == a[injectPoint +1 ..]
+//     ensures  multiset(a[injectPoint+1 .. up+1]) + multiset(a[up+1 ..]) == multiset(a[injectPoint +1 ..]) 
+//     // even a simplify version 
+//     ensures multiset(a[..injectPoint]) + multiset(a[injectPoint +1 ..]) + multiset([injectValue]) == multiset(a_old[..])
+// {}
 
-lemma Shifted(a: array<int>, a_old:array<int>,up:int,injectPoint:int)
-    requires a.Length == a_old.Length;
-    requires 0 <= injectPoint<= up < a.Length
-    requires forall i :: injectPoint < i <= up  ==> a[i] == a_old[i-1]
-    ensures a[injectPoint+1..up+1] == a_old[injectPoint..up ]
-{}
+// lemma Shifted(a: array<int>, a_old:array<int>,up:int,injectPoint:int)
+//     requires a.Length == a_old.Length;
+//     requires 0 <= injectPoint<= up < a.Length
+//     requires forall i :: injectPoint < i <= up  ==> a[i] == a_old[i-1]
+//     ensures a[injectPoint+1..up+1] == a_old[injectPoint..up ]
+// {}
 
 
 method InsertionSortShuffle(a: array<int>)
@@ -106,16 +106,15 @@ modifies a;
             invariant 0 <= injectPoint <= up;
             invariant forall i,j:: (0<=i<j<=up && j!=injectPoint)==>a[i]<=a[j];
             invariant multiset(a[..injectPoint]) == multiset(old(a)[..injectPoint]);
-            invariant multiset( a[injectPoint+1..up+1]) == multiset( old(a)[injectPoint+1.. up+1])
-            invariant injectPoint != up ==> injectPoint == old(injectPoint-1)
-            invariant injectPoint != up ==> a[injectPoint] == old(a[injectPoint])
+            invariant up < a.Length ==> a[up+1..] == old(a)[up+1..]
+            invariant up != injectPoint ==> a[injectPoint+1..up+1] == old(a[injectPoint .. up ])
         {
             a[injectPoint] := a[injectPoint-1];
             injectPoint:=injectPoint-1;
         }
-        Shifted(a, old(a),up, injectPoint);
-        // lemma for proving multiset is eqal 
-        arrayInjectEqual(a, old(a), up ,injectPoint,injectValue);
+        // Shifted(a, old(a),up, injectPoint);
+        // // lemma for proving multiset is eqal 
+        // arrayInjectEqual(a, old(a), up ,injectPoint,injectValue);
         a[injectPoint] :=  injectValue;
         up:=up+1;
     }
