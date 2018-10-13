@@ -116,6 +116,33 @@ method Test5()
 }
 
 
+method GoodTest1()
+{
+    var w := new Dishwasher();
+    w.Load();
+    w.AddDtgt();
+    w.Load();
+    w.Load();
+    w.AddDtgt();
+    w.Wash();
+    w.Unload();
+}
+
+method GoodTest2()
+{
+    // heavy duty dish washer 
+    var w := new Dishwasher();
+    w.Load();
+    w.AddDtgt();
+    w.Wash();
+    w.Load();
+    w.AddDtgt();
+    w.AddDtgt();
+    w.Wash();
+    w.Unload();
+}
+
+
 // method BadTest1()
 // {
 //     // wash before adding detergented
